@@ -1,20 +1,36 @@
 import re
 
+class TokenType:
+    RESERVED = "RESERVED"
+    OPERATOR = "OPERATOR"
+    IDENTIFIER = "IDENTIFIER"
+    INTEGER = "INTEGER"
+    STRING = "STRING"
+    L_PAREN = "L_PAREN"
+    R_PAREN = "R_PAREN"
+    DELETE = "DELETE"
+
+class Token:
+    def __init__(self, type, value, line_number):
+        self.type = type
+        self.value = value
+        self.line_number = line_number
+
 class LexicalAnalyzer:
-    # Constructor
     def __init__(self, input_string):
         self.input_string = input_string
         self.current_position = 0
-        # Regular expressions for token types
+        self.line_number = 1
         self.token_regex = [
-            # r used to specify raw string
-            ('<IDENTIFIER>', r'[a-zA-Z_][a-zA-Z0-9_]*'),
-            ('<INTEGER>', r'\d+'),
-            ('<OPERATOR>', r'[+\-*<>&.@/:=~|$\#!%^_\[\]{}"‘?]+'),
-            ('<STRING>', r"'((\\t)|(\\n)|(\\\\)|(\\')|[^'\\])*'"),
-            ('<DELETE>', r'[\s\n\t]+'),
-            ('<DELETE>', r'//.*?\n'),  # Single line comment
-            ('<PUNCTION>', r'[(),;]'),
+            (TokenType.DELETE, r'//.*?\n'),
+            (TokenType.RESERVED, r'(let|in|lambda|within|where|tau|aug|or|&|not|gr|ge|ls|le|eq|ne|true|false|nil|rec|fn|dummy)'),
+            (TokenType.OPERATOR, r'[+\-*<>&.@/:=~|$\#!%^_,\[\]{}"‘?]+'),
+            (TokenType.IDENTIFIER, r'[a-zA-Z_][a-zA-Z0-9_]*'),
+            (TokenType.INTEGER, r'\d+'),
+            (TokenType.STRING, r"'((\\t)|(\\n)|(\\\\)|(\\')|[^'\\])*'"),
+            (TokenType.L_PAREN, r'\('),
+            (TokenType.R_PAREN, r'\)'),
+            (TokenType.DELETE, r'[\s\n\t]+'),
         ]
         self.tokens = self.tokenize()
 
@@ -24,40 +40,27 @@ class LexicalAnalyzer:
             match_pattern = None
             for token_type, pattern in self.token_regex:
                 regex = re.compile(pattern)
-                match_pattern = regex.match(
-                    self.input_string, self.current_position)
-                # print(match_pattern)
+                match_pattern = regex.match(self.input_string, self.current_position)
                 if match_pattern:
-                    # to get the matched string
                     value = match_pattern.group(0)
-                    if token_type != '<DELETE>':
-                        tokens.append((token_type, value))
+                    if token_type != TokenType.DELETE:
+                        tokens.append(Token(token_type, value, self.line_number))
+                    if token_type == TokenType.DELETE and '\n' in value:
+                        self.line_number += value.count('\n')
                     self.current_position = match_pattern.end()
                     break
             if not match_pattern:
-                raise ValueError(
-                    f"Invalid token at position {self.current_position}")
+                raise ValueError(f"Invalid token at position {self.current_position}")
         return tokens
 
-    def get_tokens(self):
-        return self.tokens
+# def main():
+#     file = open("input.txt", "r")
+#     input_string = file.read()
+
+#     lexer = LexicalAnalyzer(input_string)
+#     for token in lexer.tokens:
+#         print(token.type, token.value, token.line_number)
 
 
-def main():
-    input_string = ""
-    # Take input from the user
-    print("Enter your input (type 'end' on a new line to finish):")
-    while True:
-        line = input()
-        if line.strip().lower() == "end":
-            break
-        input_string += line + "\n"
-
-    lexer = LexicalAnalyzer(input_string)
-    tokens = lexer.get_tokens()
-    for token in tokens:
-        print(token)
-
-
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

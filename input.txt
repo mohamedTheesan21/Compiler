@@ -1,0 +1,3 @@
+// comment
+let PositiveOrNegative = fn X. X ls 0 -> 'Negative' | 'Positive'
+in Print (PositiveOrNegative (-48))
