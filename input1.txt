@@ -1,0 +1,7 @@
+// findout whether a number is odd or even
+let rec OddOrEven n = n eq 1 ->
+ 'Odd'| n eq 0 ->
+ 'Even' | n < 1 ->
+ OddOrEven (n + 2) | OddOrEven (n - 2)
+in
+Print (OddOrEven (563))

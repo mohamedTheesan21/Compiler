@@ -1,0 +1,11 @@
+// this program to print Fibonacci series in a given range
+let rec fib = fn x. x ls 2 -> x | fib(x - 1) + fib(x - 2)
+in
+let rec list = fn (n, x, y, T).
+  fib(n) gr y -> T |
+  fib(n) ls x -> list(n + 1, x, y, T) |
+  list(n + 1, x, y, T aug fib(n))
+in
+let fibrange = fn (x, y). list(0, x, y, nil)
+in
+Print(fibrange(7, 60))

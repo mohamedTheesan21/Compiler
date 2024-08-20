@@ -1,69 +1,7 @@
-import Lexical_Analyzer
-
-# Define ASTNodeType enumeration
-
-
-class ASTNodeType:
-    # General
-    IDENTIFIER = "<ID:%s>"
-    STRING = "<STR:'%s>"
-    INTEGER = "<INT:%s>"
-
-    # Expressions
-    LET = "let"
-    LAMBDA = "lambda"
-    WHERE = "where"
-
-    # Tuple expressions
-    TAU = "tau"
-    AUG = "aug"
-    CONDITIONAL = "->"
-
-    # Boolean Expressions
-    OR = "or"
-    AND = "&"
-    NOT = "not"
-    GR = "gr"
-    GE = "ge"
-    LS = "ls"
-    LE = "le"
-    EQ = "eq"
-    NE = "ne"
-
-    # Arithmetic Expressions
-    PLUS = "+"
-    MINUS = "-"
-    NEG = "neg"
-    MULT = "*"
-    DIV = "/"
-    EXP = "**"
-    AT = "@"
-
-    # Rators and Rands
-    GAMMA = "gamma"
-    TRUE = "<true>"
-    FALSE = "<false>"
-    NIL = "<nil>"
-    DUMMY = "<dummy>"
-
-    # Definitions
-    WITHIN = "within"
-    SIMULTDEF = "and"
-    REC = "rec"
-    EQUAL = "="
-    FCNFORM = "function_form"
-
-    # Variables
-    PAREN = "<()>"
-    COMMA = ","
-
-    # Post-standardize
-    YSTAR = "<Y*>"
-    BETA = ""
-    DELTA = ""
-    ETA = ""
-    TUPLE = ""
-
+import LexicalAnalyzer
+from AST_.AST import AST
+from AST_.ASTNode import ASTNode
+from AST_.ASTNodeType import ASTNodeType
 
 class TokenType:
     IDENTIFIER = "IDENTIFIER"
@@ -76,23 +14,6 @@ class TokenType:
     DELETE = "DELETE"
 
 
-# Define ASTNode class
-class ASTNode:
-    def __init__(self, type=None, value=None, child=None, sibling=None, line_number=None):
-        self.type = type
-        self.value = value
-        self.child = child
-        self.sibling = sibling
-        self.line_number = line_number
-
-
-# Define AST class
-class AST:
-    def __init__(self, root):
-        self.root = root
-
-
-# Define Parser class
 class Parser:
     def __init__(self, scanner):
         self.scanner = scanner
@@ -101,7 +22,7 @@ class Parser:
         self.stack = []
 
     def build_ast(self):
-        print("Building AST")
+        # print("Building AST")
         self.start_parse()
         ast = AST(self.stack.pop())
         return ast
@@ -112,7 +33,8 @@ class Parser:
         if self.current_token is not None:
             raise Exception()
         else:
-            print("Parsing complete, no errors found.")
+            # print("Parsing complete, no errors found.")
+            return
 
     def read_non_terminal(self):
         if len(self.tokens) > 0:
@@ -297,6 +219,8 @@ class Parser:
             self.read_non_terminal()
             self.read_a()
             self.build_nary_ast_node(ASTNodeType.NE, 2)
+    
+    
     # Arithmetic Expressions
 
     # NON TERMINAL -> A
@@ -508,13 +432,24 @@ class Parser:
                 self.build_nary_ast_node(ASTNodeType.COMMA, trees_to_pop + 1)
 
 
-def main():
-    file = open("input.txt", "r")
-    input_string = file.read()
+# def main():
+#     file = open("input2.txt", "r")
+#     input_string = file.read()
 
-    scanner = Lexical_Analyzer.LexicalAnalyzer(input_string)
-    parser = Parser(scanner)
-    ast = parser.build_ast()
+#     input = LexicalAnalyzer.LexicalAnalyzer(input_string)
+#     parser = Parser(input)
+#     ast = parser.build_ast()
+#     ast.standardize()
+#     print(ast.create_deltas())
+    
+#     pre_order_traversal(ast.root)
 
-if __name__ == "__main__":
-    main()
+# def pre_order_traversal(node):
+#     while node is not None:
+#         print(node.type, node.value)
+#         if node.child is not None:
+#             pre_order_traversal(node.child)
+#         node = node.sibling
+
+# if __name__ == "__main__":
+#     main()
